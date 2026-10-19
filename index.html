@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>النونو حقك — عمر العشرين</title>
+<meta name="theme-color" content="#0b0710">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400&family=Tajawal:wght@300;400;500;700&family=Reem+Kufi:wght@500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0b0710; --bg2:#150c1d; --ink:#f6ecf0; --muted:#b9a7b4;
+  --rose:#e8a0b4; --gold:#e6c88a; --gold2:#b8935a; --glass:rgba(255,255,255,.05);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{
+  background:radial-gradient(1200px 700px at 80% -10%,#2a1230 0%,transparent 60%),
+             radial-gradient(900px 600px at 0% 40%,#1c1030 0%,transparent 60%),var(--bg);
+  color:var(--ink);font-family:'Tajawal',sans-serif;line-height:2;overflow-x:hidden;
+}
+body.locked{overflow:hidden;height:100vh}
+canvas#fx{position:fixed;inset:0;z-index:0;pointer-events:none}
+.progress{position:fixed;top:0;right:0;height:3px;width:0;z-index:50;background:linear-gradient(90deg,var(--gold),var(--rose))}
+
+/* ---------- Intro ---------- */
+.intro{
+  position:fixed;inset:0;z-index:100;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  text-align:center;padding:24px;background:radial-gradient(800px 600px at 50% 40%,#2b1233,#07040b);
+  transition:opacity 1.2s ease, visibility 1.2s;
+}
+.intro.gone{opacity:0;visibility:hidden}
+.intro .small{font-family:'Reem Kufi';letter-spacing:.3em;color:var(--gold);font-size:.95rem;margin-bottom:18px;opacity:0;animation:up 1.4s .3s forwards}
+.intro h1{font-family:'Amiri',serif;font-size:clamp(2.4rem,9vw,4.6rem);line-height:1.5;font-weight:700;
+  background:linear-gradient(120deg,#fff 20%,var(--gold) 60%,var(--rose));-webkit-background-clip:text;background-clip:text;color:transparent;
+  opacity:0;animation:up 1.6s .7s forwards}
+.intro p{color:var(--muted);margin:10px 0 36px;font-size:1.05rem;opacity:0;animation:up 1.6s 1.2s forwards}
+.btn{
+  font-family:'Tajawal';font-weight:700;font-size:1.05rem;color:#1b0f1d;cursor:pointer;border:0;
+  padding:14px 38px;border-radius:60px;background:linear-gradient(120deg,var(--gold),#f4dfb4 50%,var(--rose));
+  box-shadow:0 10px 40px rgba(230,200,138,.25);transition:transform .3s, box-shadow .3s;
+}
+.btn:hover{transform:translateY(-3px);box-shadow:0 14px 50px rgba(232,160,180,.4)}
+.intro .btn{opacity:0;animation:up 1.6s 1.7s forwards}
+@keyframes up{from{opacity:0;transform:translateY(26px)}to{opacity:1;transform:none}}
+
+/* ---------- Layout ---------- */
+main{position:relative;z-index:2}
+.hero{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:90px 24px 60px}
+.hero .age{font-family:'Reem Kufi';font-size:clamp(7rem,32vw,16rem);line-height:1;
+  background:linear-gradient(180deg,var(--gold),#7a5a35 90%);-webkit-background-clip:text;background-clip:text;color:transparent;
+  filter:drop-shadow(0 0 40px rgba(230,200,138,.25))}
+.hero h2{font-family:'Amiri',serif;font-size:clamp(1.6rem,5vw,2.6rem);font-weight:400;margin-top:6px}
+.hero p{color:var(--muted);max-width:520px;margin-top:14px}
+.scroll{margin-top:44px;color:var(--gold);font-size:.85rem;letter-spacing:.2em;animation:bob 2.4s infinite}
+@keyframes bob{50%{transform:translateY(10px)}}
+
+section.station{
+  min-height:100vh;display:flex;align-items:center;justify-content:center;padding:90px 22px;position:relative;
+}
+.card{
+  width:100%;max-width:760px;background:var(--glass);border:1px solid rgba(230,200,138,.18);border-radius:28px;
+  padding:clamp(26px,5vw,52px);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+  box-shadow:0 30px 80px rgba(0,0,0,.45);position:relative;
+}
+.num{position:absolute;top:-34px;right:34px;font-family:'Reem Kufi';font-size:4.5rem;color:rgba(230,200,138,.14);line-height:1}
+.tag{font-family:'Reem Kufi';color:var(--gold);letter-spacing:.18em;font-size:.9rem}
+.card h3{font-family:'Amiri',serif;font-size:clamp(1.7rem,5.5vw,2.5rem);line-height:1.6;margin:6px 0 18px;font-weight:700}
+.card p{font-size:1.12rem;color:#eadde4;margin-bottom:14px;font-weight:300}
+.card p b{color:var(--gold);font-weight:500}
+.quote{font-family:'Amiri',serif;font-style:italic;font-size:1.35rem;color:var(--rose);border-right:3px solid var(--gold2);padding:6px 18px;margin:18px 0}
+
+/* photo frames */
+.photo{
+  width:min(100%,360px);aspect-ratio:4/5;margin:0 auto 30px;border-radius:200px 200px 22px 22px;overflow:hidden;position:relative;
+  border:2px solid var(--gold2);box-shadow:0 0 0 8px rgba(230,200,138,.08),0 25px 60px rgba(0,0,0,.55);background:#1a1022;
+}
+.photo.wide{border-radius:22px;aspect-ratio:4/3;width:min(100%,520px)}
+.photo img{width:100%;height:100%;object-fit:cover;display:block;transform:scale(1.08);transition:transform 2.5s ease}
+.reveal.in .photo img{transform:scale(1)}
+.photo .ph{position:absolute;inset:0;display:none;align-items:center;justify-content:center;text-align:center;padding:20px;color:var(--muted);font-size:.95rem}
+.photo.missing .ph{display:flex}
+.photo.missing img{display:none}
+.cap{text-align:center;color:var(--gold);font-family:'Amiri',serif;font-size:1.1rem;margin:-14px 0 24px}
+
+/* timeline spine */
+.spine{position:absolute;top:0;bottom:0;right:50%;width:1px;background:linear-gradient(transparent,rgba(230,200,138,.35),transparent);z-index:1}
+
+/* reveal */
+.reveal{opacity:0;transform:translateY(50px);transition:opacity 1.3s ease,transform 1.3s cubic-bezier(.2,.7,.2,1)}
+.reveal.in{opacity:1;transform:none}
+.line{opacity:0;transform:translateY(14px);transition:all 1s ease}
+.reveal.in .line{opacity:1;transform:none}
+.reveal.in .line:nth-child(2){transition-delay:.15s}.reveal.in .line:nth-child(3){transition-delay:.3s}
+.reveal.in .line:nth-child(4){transition-delay:.45s}.reveal.in .line:nth-child(5){transition-delay:.6s}
+.reveal.in .line:nth-child(6){transition-delay:.75s}.reveal.in .line:nth-child(7){transition-delay:.9s}
+
+.big-quote{font-family:'Amiri',serif;text-align:center;font-size:clamp(1.6rem,5.5vw,2.6rem);line-height:2;max-width:760px;margin:0 auto;padding:60px 24px}
+.big-quote em{color:var(--gold);font-style:normal}
+
+/* ---------- Pledge ---------- */
+.pledge .card{max-width:820px}
+.balance{display:flex;gap:14px;margin:22px 0}
+.balance div{flex:1;border:1px solid rgba(230,200,138,.22);border-radius:18px;padding:16px;text-align:center;background:rgba(255,255,255,.03)}
+.balance strong{font-family:'Reem Kufi';font-size:2.2rem;color:var(--gold);display:block;line-height:1.3}
+.balance span{font-size:.92rem;color:var(--muted);line-height:1.7;display:block}
+.balance .mid{display:flex;align-items:center;justify-content:center;flex:0 0 40px;font-size:1.6rem;color:var(--rose);border:0;background:none;padding:0}
+.seven{display:grid;gap:12px;margin:18px 0}
+.seven label{display:flex;align-items:center;gap:12px}
+.seven i{flex:0 0 36px;height:36px;border-radius:50%;display:grid;place-items:center;font-style:normal;font-family:'Reem Kufi';background:linear-gradient(135deg,var(--gold),var(--rose));color:#1b0f1d;font-weight:700}
+input,textarea{
+  width:100%;font-family:'Tajawal';font-size:1rem;color:var(--ink);background:rgba(255,255,255,.06);
+  border:1px solid rgba(255,255,255,.14);border-radius:14px;padding:12px 16px;outline:none;transition:border .3s, background .3s;
+}
+input:focus,textarea:focus{border-color:var(--gold);background:rgba(255,255,255,.09)}
+textarea{min-height:150px;resize:vertical;margin-top:8px}
+.row{display:flex;flex-wrap:wrap;gap:12px;margin-top:18px}
+.btn.ghost{background:transparent;color:var(--gold);border:1px solid var(--gold2);box-shadow:none}
+
+/* ---------- Finale ---------- */
+.finale{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:90px 24px;position:relative}
+.finale .seal{margin-top:26px}
+.vow{
+  max-width:720px;margin-top:34px;opacity:0;transform:scale(.96);transition:all 2s ease;pointer-events:none;height:0;overflow:hidden;
+}
+.vow.show{opacity:1;transform:none;height:auto;pointer-events:auto}
+.vow p{font-family:'Amiri',serif;font-size:clamp(1.3rem,4.5vw,1.9rem);line-height:2.2;margin-bottom:12px}
+.vow .sig{color:var(--gold);margin-top:22px}
+.heart{font-size:2.6rem;color:var(--rose);display:inline-block;animation:beat 1.4s infinite}
+@keyframes beat{0%,100%{transform:scale(1)}15%{transform:scale(1.25)}30%{transform:scale(1)}45%{transform:scale(1.18)}}
+footer{text-align:center;color:var(--muted);font-size:.85rem;padding:30px 20px 60px;position:relative;z-index:2}
+
+.music{position:fixed;left:16px;bottom:16px;z-index:60;width:46px;height:46px;border-radius:50%;border:1px solid var(--gold2);
+  background:rgba(11,7,16,.7);color:var(--gold);font-size:1.1rem;cursor:pointer;display:none;backdrop-filter:blur(8px)}
+.music.on{display:block}
+
+@media(max-width:560px){
+  .balance{flex-direction:column}.balance .mid{flex:none;transform:rotate(90deg)}
+  .num{font-size:3.4rem;top:-24px}
+}
+@media (prefers-reduced-motion:reduce){*{animation-duration:.01s!important;transition-duration:.01s!important}}
+</style>
+</head>
+<body class="locked">
+<div class="progress" id="bar"></div>
+<canvas id="fx"></canvas>
+
+<!-- ============ INTRO ============ -->
+<div class="intro" id="intro">
+  <div class="small">قصّةٌ كُتبت لكِ وحدكِ</div>
+  <h1>ستّ سنواتٍ<br>وحُبٌّ واحد</h1>
+  <p>افتحيها بهدوء… ففي كل محطةٍ جزءٌ من قلبي</p>
+  <button class="btn" id="start">ابدأي الحكاية</button>
+</div>
+
+<button class="music" id="music" title="الموسيقى">♪</button>
+<audio id="audio" loop preload="none" src="music.mp3"></audio>
+
+<main>
+
+<!-- ============ HERO ============ -->
+<div class="hero">
+  <div class="tag reveal">٢٠٢٦</div>
+  <div class="age reveal">20</div>
+  <h2 class="reveal">عمري عشرون… وعمري الحقيقي ستّ سنوات</h2>
+  <p class="reveal">سبعُ محطّات تحكي كيف وُلدتُ من جديد يوم عرفتكِ، وكيف صار الحبُّ بيتي.</p>
+  <div class="scroll">↓ انزلي</div>
+</div>
+
+<!-- ============ 1 ============ -->
+<section class="station">
+  <div class="card reveal">
+    <div class="num">01</div>
+    <div class="photo" id="p1">
+      <img src="images/child.jpg" alt="مهند وهو صغير">
+      <div class="ph">ضعي هنا صورة الطفولة<br><small>images/child.jpg</small></div>
+    </div>
+    <div class="cap line">«النونو حقك»… في الخامسة</div>
+    <div class="tag line">المحطة الأولى · عمر ٥ سنوات</div>
+    <h3 class="line">طفلٌ لم يعرف الحبّ بعد</h3>
+    <p class="line">أنا مهند… أو كما تُسمّينني: <b>«النونو حقك»</b>.</p>
+    <p class="line">في هذه الصورة كان عمري خمس سنوات؛ طفلٌ لا يعرف بعدُ معنى الحبّ ولا الكره، ولا يفهم الشغفَ ولا الاهتمام.</p>
+    <p class="line">كلُّ ما كنتُ أشعر به حينها أنني مختلف… غريبٌ بين أطفالٍ في مثل سنّي.</p>
+  </div>
+</section>
+
+<!-- ============ 2 ============ -->
+<section class="station">
+  <div class="card reveal">
+    <div class="num">02</div>
+    <div class="tag line">المحطة الثانية · ٢٠٢١ · عمر ١٤ سنة</div>
+    <h3 class="line">الرسالة التي غيّرت كل شيء</h3>
+    <p class="line">كبرتُ، وصرتُ في هذا العمر أبحث عن الشهرة والمحبّة، أهرب بهما من كلمةٍ ظلّت تتردّد حولي ولم أنسها حتى اليوم:</p>
+    <div class="quote line">«مَن يحبّك؟ حتى أمّك ما تحبّك! مَن الذي سيقبلك؟»</div>
+    <p class="line">وفي لحظةٍ واحدة تغيّر كل شيء. اشتهرت، وجاءتني رسالةٌ من شخصٍ فتحتُها… فأخذتنا السوالف، وأضفتُه، ولم أكن أعلم أن هذا القبول سيغيّر تاريخ حياتي كلّه.</p>
+    <p class="line">يوماً بعد يوم شعرتُ أنه أكثر شخصٍ يناسبني؛ فهمتُه وفهمني، حتى نطق بأول كلمةٍ جعلتني أطير من الفرح: <b>«أحبّك»</b>.</p>
+    <p class="line">يومها أدركتُ أن كل تلك الأسئلة المؤلمة لم تكن إلا كذبة.</p>
+  </div>
+</section>
+
+<div class="big-quote reveal">لم أبحث عن الحبّ يومها…<br><em>الحبّ هو الذي وجدني</em></div>
+
+<!-- ============ 3 ============ -->
+<section class="station">
+  <div class="card reveal">
+    <div class="num">03</div>
+    <div class="tag line">المحطة الثالثة · نهاية ٢٠٢١ إلى أبريل ٢٠٢٢</div>
+    <h3 class="line">أحببتكِ حدّ الجنون</h3>
+    <p class="line">لا لأنني كنتُ أبحث عن الحب، ولا لأنكِ جئتِني في وقتٍ كنتُ أسمع فيه ذلك الكلام… بل لأنكِ <b>أكثر شخصٍ يعرفني ويهتمّ لأمري</b>، أكثر من سمع مني لا عني، وأكثر من كان حنوناً عليّ. كنتُ أشعر بجانبكِ أنني طفل.</p>
+    <p class="line">لكن الحكاية لا تكتمل إلا بالوجع. فقبل نهاية ٢٠٢١ حظرتِني في يوم جمعةٍ لن أنساه؛ كنتُ عائداً من الصلاة، وقلتُ لكِ كعادتي «أحييكِ»، فوجدتُ نفسي محظوراً. كانت فترةً صعبة، غرقتُ فيها في الأسئلة والدموع.</p>
+    <p class="line">ثم عدنا نتكلّم في السرّ، وعادت لي الحياة… حتى جاء <b>١٤ / ٤ / ٢٠٢٢</b>، تاريخٌ لن أنساه أبداً، حين حُظرتُ مرةً أخرى من جوالك.</p>
+    <p class="line">كانت أقسى فترةٍ مرّت على نفسيّتي؛ أستيقظ وأبكي كطفلٍ يتيم، وكأنني لن أراكِ بعد اليوم. لم يكن حبّ أطفال أبداً… كان حلماً، وكان كلَّ شيء.</p>
+    <p class="line">وما زلتِ أنتِ نفسَ الحلم ونفسَ الحبّ، <b>لكنه اليوم أكبر بكثير.</b> ♡</p>
+  </div>
+</section>
+
+<!-- ============ 4 ============ -->
+<section class="station">
+  <div class="card reveal">
+    <div class="num">04</div>
+    <div class="tag line">المحطة الرابعة · نوفمبر ٢٠٢٤</div>
+    <h3 class="line">عدتِ… وكبرنا معاً</h3>
+    <p class="line">رجعتِ لي، وكبرنا سوياً وتعلّمنا سوياً. أهلكِ صاروا يعرفون ما بيننا.</p>
+    <p class="line">وفي نوفمبر ٢٠٢٤ جئتِني تقولين إنكِ ستقفين ضدّ الجميع معنا، وستنصرين الحبّ الذي بيننا. وفي تلك الفترة دخلتُ إلى قلوب أهلكِ كلّهم، وكنتُ مثالاً للحبّ الحقيقي.</p>
+    <p class="line">وعرّفتُكِ على خالتي، لأنني لا أريد شيئاً يُبعدكِ عني. أريدكِ طوال وقتي وجنبي… <b>أريدكِ زوجتي، وأريدكِ بكل ما فيّ.</b></p>
+  </div>
+</section>
+
+<!-- ============ 5 ============ -->
+<section class="station">
+  <div class="card reveal">
+    <div class="num">05</div>
+    <div class="photo wide" id="p2">
+      <img src="images/first-meeting.jpg" alt="صورتنا في اللقاء الأول">
+      <div class="ph">ضعي هنا صورة اللقاء الأول<br><small>images/first-meeting.jpg</small></div>
+    </div>
+    <div class="cap line">٦ مايو ٢٠٢٥ · أجمل يومٍ في حياتي</div>
+    <div class="tag line">المحطة الخامسة · اللقاء الأول</div>
+    <h3 class="line">اليوم الذي أردتُه أن لا ينتهي</h3>
+    <p class="line">وجاء أول لقاءٍ لنا في الواقع، <b>٦ / ٥ / ٢٠٢٥</b>. استأجرتُ سيارةً من مكة إلى ينبع، وطريقي كلُّه خوفٌ وتوتّر: أخاف أن لا أعجبكِ، أخاف أنكِ بعد أن تَريني لن تحبّيني ولن تريديني.</p>
+    <p class="line">ركبتِ معي، ومسكتِ يدي وهي تكاد تسقط من الرجفة. بقيتُ أنظر إلى يدكِ أتأكّد: هل هذا حقيقي؟</p>
+    <p class="line">وحين كشفتِ عن وجهكِ انصدمت… جمالٌ لم تستطع أيّ كاميرا أن تنقله بدقّة. كنتُ أتأمّلكِ وأقول: هذه تحبّني؟ فعلاً تحبّني؟</p>
+    <p class="line">كان أسعد يومٍ في حياتي. تمنّيتُ لو أن اليوم يتحوّل من ٢٤ ساعة إلى ٢٤ عاماً كي لا ينتهي. ضممتُكِ، وشممتُ عطراً أظنّه لم يُصنع في العالم كلّه إلا لكِ، وحين كنتِ تتكلّمين كانت تجذبني طاقةٌ إليكِ أكثر وأكثر.</p>
+    <p class="line">وضممتُكِ <b>كطفلٍ يتيمٍ عرف أخيراً أن له أمّاً.</b></p>
+  </div>
+</section>
+
+<!-- ============ 6 ============ -->
+<section class="station">
+  <div class="card reveal">
+    <div class="num">06</div>
+    <div class="tag line">المحطة السادسة · العهد والوفاء</div>
+    <h3 class="line">أنتِ خطّي الأحمر ومتنفّسي الوحيد</h3>
+    <p class="line">رجعتُ من اللقاء الأول وأنا لا أصدّق ما حصل، وكأنه حلم. وفي طريقي كلّه من بيتكِ إلى بيتي أسأل نفسي سؤالاً واحداً: كيف يحبّني هذا الشخص؟ كنتُ أنتقص نفسي وأقول إنني لا أستحقّكِ.</p>
+    <p class="line">وفي كل مرة يحدث بيننا شيء، لا ألومكِ أنتِ، بل ألوم نفسي دائماً؛ فمن شدّة حبّي لا أراكِ مخطئة أبداً، وحتى لو أخطأتِ فأنا المخطئ لأنكِ أخطأتِ. أنتِ متنفّسي الوحيد في هذه الدنيا.</p>
+    <p class="line">قد أتصرّف تصرّفاتٍ غبيّة، وأشياء تافهة تقع في خاطركِ وتزعلكِ، لكنني لا أرضى زعلكِ أبداً، وأجتهد دائماً أن أجد طريقةً أُرضيكِ بها، لأنني لا أريد أن أخسركِ. أنتِ بالنسبة لي <b>خطٌّ أحمر</b>.</p>
+    <div class="quote line">أتمنّى أن أموت ولا تشعري يوماً أنكِ غير مهمّة، أو أنني لا أحبّكِ، أو أنني لا أقدّركِ.</div>
+    <p class="line">وأدعو دائماً أن يأخذني الله قبل أن يصلكِ هذا الإحساس، لأنني أحاول بكل الطرق أن لا تشعري به. ورغم أنكِ شعرتِ به كثيراً في الفترة الأخيرة وأعرف ذلك، وربما لا زلتِ لا تتقبّلينني حتى الآن… فتأكّدي، وبعزّة جلال الله، <b>ليس لأحدٍ في الدنيا عليّ تأثيرٌ مثلكِ.</b> أنتِ التي تؤثّرين في قراراتي وفي كل شيءٍ فيّ؛ كلمةٌ منكِ تُسعدني، وكلمةٌ منكِ تقتلني.</p>
+  </div>
+</section>
+
+<!-- ============ 7 ============ -->
+<section class="station">
+  <div class="card reveal">
+    <div class="num">07</div>
+    <div class="photo" id="p3">
+      <img src="images/now.jpg" alt="مهند في العشرين">
+      <div class="ph">ضعي هنا صورتي الآن<br><small>images/now.jpg</small></div>
+    </div>
+    <div class="cap line">مهند · ٢٠ عاماً</div>
+    <div class="tag line">المحطة السابعة والأخيرة · عام العشرين</div>
+    <h3 class="line">ميلادي الحقيقي</h3>
+    <p class="line">أنا اليوم مهند، عمري <b>عشرون</b> عاماً. لكنه ليس عمري الحقيقي أبداً؛ فعمري الحقيقي <b>ستّ سنوات</b>… بدأ يوم عرفتكِ، يوم أحببتكِ، وفي اللحظة التي نطقتِ فيها «أحبّك» وُلدتُ من جديد.</p>
+    <p class="line">واسمي في هذا العمر ليس مهند، بل <b>«النونو حقي»</b> كما تناديني دائماً.</p>
+    <p class="line">أدخل اليوم عامي العشرين وليس عندي إلا إنجازٌ واحد أفخر به منذ ستّ سنوات: <b>الحبّ الذي في داخلي لكِ</b>، وأنني شخصٌ محبوبٌ جداً عندكِ.</p>
+    <p class="line">وفي هذا العمر أطلب منكِ أن تُكملي معي ما بقي من عمري… ونحن في رحلة نتعرّف فيها على بعضنا.</p>
+  </div>
+</section>
+
+<div class="big-quote reveal">لا أريد منكِ أن تتغيّري…<br><em>أحبّكِ كما أنتِ</em></div>
+
+<!-- ============ PLEDGE ============ -->
+<section class="station pledge">
+  <div class="card reveal">
+    <div class="tag line">ما بيننا أكبر من الكلام</div>
+    <h3 class="line">وعدٌ نكتبه معاً</h3>
+    <p class="line">لا أريدكِ أن تغيّري شيئاً في نفسكِ؛ فأنا أحبّكِ كما أنتِ. لكنني كنتُ دائماً أطلب منكِ أن ترسلي لي أشياء تتمنّين أن أتغيّر فيها، لنصير أفضل وأفضل من قبل.</p>
+    <p class="line">فاكتبي لي هنا <b>سبعة أشياء</b> (أو أكثر) تتمنّين أن نحقّقها هذه السنة، ثم رسالةً بكل ما تتمنّينه فيّ… ونعدّلها سوياً.</p>
+
+    <div class="balance line">
+      <div><strong>١٠٪</strong><span>إن لم أستطع أن أعطي إلا هذا… ستجدينني أعطي ٩٠٪</span></div>
+      <div class="mid">⇄</div>
+      <div><strong>٩٠٪</strong><span>وإن لم تستطيعي أنتِ… ستجدينني أعطي ٩٠٪ وأكثر</span></div>
+    </div>
+    <p class="line" style="text-align:center;color:var(--gold);font-family:Amiri,serif;font-size:1.25rem">والذي يقصّر فينا يعوّضه الآخر… هذا هو الحبّ الذي ربّينا عليه.</p>
+
+    <div class="seven line" id="seven"></div>
+    <label class="line" style="display:block;margin-top:26px;color:var(--gold)">رسالتكِ لي: كل ما تتمنّينه فيّ</label>
+    <textarea class="line" id="msg" placeholder="اكتبي من قلبكِ…"></textarea>
+    <div class="row line">
+      <button class="btn" id="send">أرسليها لي عبر واتساب</button>
+      <button class="btn ghost" id="copy">انسخي الرسالة</button>
+    </div>
+  </div>
+</section>
+
+<!-- ============ FINALE ============ -->
+<div class="finale">
+  <div class="heart reveal">♥</div>
+  <div class="big-quote reveal" style="padding:20px 0 0">في النهاية…<br><em>لا أحبّ إلا أنتِ</em></div>
+  <button class="btn seal reveal" id="seal">اخـتـم العهد</button>
+
+  <div class="vow" id="vow">
+    <p>في النهاية، أنا لا أحبّ إلا أنتِ.</p>
+    <p>جعلني الله لا أفقدكِ، وجعلني دائماً الشخص الذي يُسعدكِ.</p>
+    <p>وإن كنتُ في يومٍ شرّاً عليكِ، فليأخذ ربّي أمانتي، ولا يجعلني في يومٍ مصدرَ شرٍّ لكِ.</p>
+    <p class="sig">أحبّكِ يا حنو… أحبّكِ يا أجمل شيءٍ في حياتي.</p>
+    <p class="sig" style="font-size:1.1rem;color:var(--muted)">— النونو حقك · مهند</p>
+  </div>
+</div>
+
+<footer>كُتب بحبٍّ في عيد ميلادي العشرين · ٢٠٢٦</footer>
+</main>
+
+<script>
+(function(){
+  /* ---------- helpers ---------- */
+  var $ = function(s){return document.querySelector(s)};
+  var body = document.body;
+
+  /* missing photos fallback */
+  ['p1','p2','p3'].forEach(function(id){
+    var box = document.getElementById(id), img = box.querySelector('img');
+    img.addEventListener('error', function(){ box.classList.add('missing'); });
+  });
+
+  /* ---------- background particles ---------- */
+  var c = $('#fx'), ctx = c.getContext('2d'), W, H, parts = [], burst = [];
+  function size(){ W = c.width = innerWidth; H = c.height = innerHeight; }
+  size(); addEventListener('resize', size);
+  for (var i=0;i<70;i++) parts.push({x:Math.random()*W,y:Math.random()*H,r:Math.random()*1.6+.3,v:Math.random()*.25+.05,a:Math.random()*Math.PI*2});
+  function loop(){
+    ctx.clearRect(0,0,W,H);
+    parts.forEach(function(p){
+      p.y -= p.v; p.a += .02;
+      if (p.y < -5){ p.y = H+5; p.x = Math.random()*W; }
+      ctx.globalAlpha = .35 + Math.sin(p.a)*.3;
+      ctx.fillStyle = '#e6c88a';
+      ctx.beginPath(); ctx.arc(p.x,p.y,p.r,0,6.283); ctx.fill();
+    });
+    burst = burst.filter(function(b){ return b.life > 0; });
+    burst.forEach(function(b){
+      b.x += b.vx; b.y += b.vy; b.vy += .04; b.life -= 1;
+      ctx.globalAlpha = Math.max(b.life/120,0);
+      ctx.fillStyle = b.c; ctx.font = b.s+'px serif';
+      ctx.fillText('♥', b.x, b.y);
+    });
+    ctx.globalAlpha = 1;
+    requestAnimationFrame(loop);
+  }
+  loop();
+  function hearts(n){
+    var cols = ['#e8a0b4','#e6c88a','#ff7fa0','#fff'];
+    for (var i=0;i<n;i++) burst.push({
+      x:W/2+(Math.random()-.5)*80, y:H*0.62,
+      vx:(Math.random()-.5)*7, vy:-Math.random()*8-2,
+      life:100+Math.random()*60, s:Math.random()*22+12, c:cols[Math.floor(Math.random()*cols.length)]
+    });
+  }
+
+  /* ---------- intro ---------- */
+  var audio = $('#audio'), mbtn = $('#music');
+  $('#start').addEventListener('click', function(){
+    $('#intro').classList.add('gone'); body.classList.remove('locked');
+    hearts(40);
+    audio.volume = .5;
+    audio.play().then(function(){ mbtn.classList.add('on'); mbtn.textContent='♪'; }).catch(function(){});
+    audio.addEventListener('error', function(){ mbtn.classList.remove('on'); }, true);
+    setTimeout(revealCheck, 600);
+  });
+  mbtn.addEventListener('click', function(){
+    if (audio.paused){ audio.play(); mbtn.textContent='♪'; mbtn.style.opacity=1; }
+    else { audio.pause(); mbtn.textContent='✕'; mbtn.style.opacity=.6; }
+  });
+
+  /* ---------- reveal on scroll ---------- */
+  var io = new IntersectionObserver(function(es){
+    es.forEach(function(e){ if (e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); } });
+  }, {threshold:.18});
+  document.querySelectorAll('.reveal').forEach(function(el){ io.observe(el); });
+  function revealCheck(){ window.dispatchEvent(new Event('scroll')); }
+
+  /* progress bar */
+  addEventListener('scroll', function(){
+    var h = document.documentElement.scrollHeight - innerHeight;
+    $('#bar').style.width = (scrollY / h * 100) + '%';
+  }, {passive:true});
+
+  /* ---------- seven things ---------- */
+  var seven = $('#seven');
+  for (var i=1;i<=7;i++){
+    seven.insertAdjacentHTML('beforeend',
+      '<label><i>'+i+'</i><input type="text" placeholder="الأمر رقم '+i+'…" data-n="'+i+'"></label>');
+  }
+  function compose(){
+    var items = [].slice.call(document.querySelectorAll('#seven input')).map(function(x,i){
+      return x.value.trim() ? (i+1)+'- '+x.value.trim() : '';
+    }).filter(Boolean).join('\n');
+    var msg = $('#msg').value.trim();
+    return '✨ الأشياء التي أتمنّى أن نحقّقها هذه السنة ✨\n\n' + (items||'—') +
+           '\n\n💌 رسالتي لك:\n' + (msg||'—');
+  }
+  $('#send').addEventListener('click', function(){
+    window.open('https://wa.me/?text='+encodeURIComponent(compose()), '_blank');
+    hearts(25);
+  });
+  $('#copy').addEventListener('click', function(){
+    var t = compose(), b = this;
+    (navigator.clipboard ? navigator.clipboard.writeText(t) : Promise.reject()).then(function(){
+      b.textContent = 'تم النسخ ♥'; setTimeout(function(){ b.textContent='انسخي الرسالة'; }, 2000);
+    }).catch(function(){ prompt('انسخي الرسالة:', t); });
+  });
+
+  /* ---------- seal the vow ---------- */
+  $('#seal').addEventListener('click', function(){
+    $('#vow').classList.add('show');
+    this.style.display = 'none';
+    var n = 0, t = setInterval(function(){ hearts(30); if (++n > 5) clearInterval(t); }, 350);
+    setTimeout(function(){ $('#vow').scrollIntoView({behavior:'smooth', block:'center'}); }, 300);
+  });
+})();
+</script>
+</body>
+</html>
